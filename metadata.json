@@ -1,6 +1,6 @@
 {
-  "name": "Google AI Studio Developer Platform",
-  "description": "A comprehensive developer workspace for building, prototyping, and testing with Gemini models, system prompts, structured outputs, function calling tools, and multimodal workflows.",
+  "name": "CorePick - AI Model Hardware & Inference Optimization Platform",
+  "description": "Vendor-neutral AI model-to-hardware profiling, inference benchmarking, kernel flamegraph analysis, and automated TensorRT/ONNX/QNN deployment code generation.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

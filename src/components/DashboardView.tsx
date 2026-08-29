@@ -17,7 +17,8 @@ import {
   Network,
   Sliders,
   Code2,
-  SlidersHorizontal
+  SlidersHorizontal,
+  BookOpen
 } from 'lucide-react';
 import { MODEL_CATALOG, SAMPLE_OPTIMIZATION_JOBS, HARDWARE_CATALOG } from '../data/mockData';
 import { OptimizationJob } from '../types';
@@ -147,6 +148,35 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               Custom ONNX upload, TRT kernel tuning, and hardware fallback scanner.
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Knowledge Base Featured Callout Banner */}
+      <div 
+        onClick={() => onNavigate('knowledge-base')}
+        className="bg-gradient-to-r from-cyan-950/60 via-[#0D1322] to-indigo-950/60 border border-cyan-800/40 hover:border-cyan-400/80 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer transition-all hover:scale-[1.01] group shadow-lg"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-cyan-950 border border-cyan-800/60 flex items-center justify-center text-cyan-400 flex-shrink-0 group-hover:bg-cyan-500 group-hover:text-[#07090E] transition-colors">
+            <BookOpen className="w-5 h-5" />
+          </div>
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold font-mono text-white group-hover:text-cyan-300 transition-colors">
+                AI Inference & Hardware Knowledge Base
+              </span>
+              <span className="text-[9px] font-mono font-bold uppercase px-2 py-0.5 bg-cyan-500/20 text-cyan-300 rounded border border-cyan-500/30">
+                SEO Technical Guides
+              </span>
+            </div>
+            <p className="text-xs text-slate-400">
+              Read peer-reviewed guides on AWQ vs GPTQ quantization, Roofline arithmetic intensity, PagedAttention, and 2026 GPU TCO economics.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs font-mono text-cyan-400 font-bold flex-shrink-0 group-hover:translate-x-1 transition-transform">
+          <span>Explore Knowledge Hub</span>
+          <ChevronRight className="w-4 h-4" />
         </div>
       </div>
 

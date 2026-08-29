@@ -17,9 +17,17 @@ import {
   Sparkles,
   ExternalLink,
   ChevronRight,
-  Maximize2
+  Maximize2,
+  BookOpen,
+  Users,
+  DollarSign,
+  Smartphone,
+  Upload,
+  GitMerge,
+  Download
 } from 'lucide-react';
 import { HARDWARE_CATALOG, MODEL_CATALOG } from '../data/mockData';
+import { KNOWLEDGE_BASE_ARTICLES } from '../data/knowledgeBaseData';
 
 interface LandingPageViewProps {
   onNavigate: (view: string) => void;
@@ -27,6 +35,8 @@ interface LandingPageViewProps {
 
 export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) => {
   const [selectedHwIndex, setSelectedHwIndex] = useState(0);
+  const [selectedPersona, setSelectedPersona] = useState(0);
+
   const sampleHws = [
     {
       name: 'NVIDIA RTX 4090 (24GB)',
@@ -282,6 +292,224 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) 
         </div>
       </section>
 
+      {/* Dedicated Target Audience & How To Use Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full border-t border-[#1E293B] space-y-12" id="audience-section">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-800/60 text-cyan-400 text-xs font-mono font-bold">
+              <Users className="w-3.5 h-3.5" />
+              <span>Target Audience & Use Cases</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-mono">
+              Who CorePick Is For & How To Use It
+            </h2>
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+              Designed for engineering teams who demand verified inference speed, deterministic memory bounds, and minimal cloud GPU spend.
+            </p>
+          </div>
+
+          <button
+            onClick={() => onNavigate('how-it-works')}
+            className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer self-start md:self-auto"
+          >
+            <span>Explore Full Interactive Guide</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* 4 Persona Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            {
+              title: 'ML & AI Engineers',
+              role: 'Deploying LLMs & Vision Models',
+              icon: Layers,
+              color: 'text-cyan-400',
+              border: 'border-cyan-800/50',
+              benefit: '1-Click Triton & vLLM export, automated INT4 AWQ quantization, and live streaming simulator.',
+              action: 'app-analyze',
+              actionText: 'Launch Profiler'
+            },
+            {
+              title: 'HPC / Performance',
+              role: 'CUDA Kernels & Roofline Tuning',
+              icon: Flame,
+              color: 'text-rose-400',
+              border: 'border-rose-800/50',
+              benefit: 'Microsecond layer flamegraph, exact FLOPs/Byte intensity diagnostics, and SwiGLU operator fusion.',
+              action: 'app-inspector',
+              actionText: 'View Flamegraph'
+            },
+            {
+              title: 'FinOps & CTOs',
+              role: 'Cutting Cloud GPU Waste',
+              icon: DollarSign,
+              color: 'text-amber-400',
+              border: 'border-amber-800/50',
+              benefit: 'Compare 30+ GPUs, calculate cost-per-million tokens, and slash cloud GPU infrastructure bills by up to 58%.',
+              action: 'app-sandbox',
+              actionText: 'Compare Hardware'
+            },
+            {
+              title: 'Edge AI & Embedded',
+              role: 'NPUs, Mobile & Robotics',
+              icon: Smartphone,
+              color: 'text-emerald-400',
+              border: 'border-emerald-800/50',
+              benefit: 'Compile models for Qualcomm Hexagon NPUs, Apple Neural Engine, and Intel OpenVINO under <15W limits.',
+              action: 'app-fleet',
+              actionText: 'NPU Hardware Fleet'
+            }
+          ].map((persona, idx) => {
+            const Icon = persona.icon;
+            return (
+              <div
+                key={idx}
+                className="bg-[#0D1322] border border-[#1E293B] hover:border-cyan-500/50 rounded-3xl p-6 flex flex-col justify-between space-y-4 transition-all duration-200 hover:-translate-y-1 group shadow-lg"
+              >
+                <div className="space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#131B2E] border border-[#27354F] flex items-center justify-center text-cyan-400 group-hover:bg-cyan-950/80 group-hover:border-cyan-700 transition-colors">
+                    <Icon className={`w-6 h-6 ${persona.color}`} />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold font-mono text-white leading-snug">
+                      {persona.title}
+                    </h3>
+                    <p className="text-xs font-mono text-slate-400">
+                      {persona.role}
+                    </p>
+                  </div>
+                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                    {persona.benefit}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => onNavigate(persona.action)}
+                  className="pt-3 border-t border-[#1E293B] flex items-center justify-between text-xs font-mono text-cyan-400 font-bold hover:text-cyan-300 transition-colors w-full cursor-pointer"
+                >
+                  <span>{persona.actionText}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 4-Step Simplified Visual Pipeline Banner */}
+        <div className="bg-[#0D1322] border border-[#1E293B] rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
+              Standard 4-Step Optimization Journey
+            </span>
+            <span className="text-xs font-mono text-slate-500 hidden sm:inline">Zero-Setup in Browser</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
+            <div className="p-4 bg-[#07090E] rounded-2xl border border-[#1E293B] space-y-2">
+              <div className="flex items-center gap-2 text-cyan-400 font-bold">
+                <Upload className="w-4 h-4" />
+                <span>1. Ingest Graph</span>
+              </div>
+              <p className="text-slate-400 font-sans text-[11px] leading-relaxed">
+                Upload ONNX / PyTorch weights or select presets (Llama-3, YOLOv8).
+              </p>
+            </div>
+
+            <div className="p-4 bg-[#07090E] rounded-2xl border border-[#1E293B] space-y-2">
+              <div className="flex items-center gap-2 text-rose-400 font-bold">
+                <Flame className="w-4 h-4" />
+                <span>2. Diagnose Roofline</span>
+              </div>
+              <p className="text-slate-400 font-sans text-[11px] leading-relaxed">
+                Detect memory-bound operators and apply INT4 AWQ / FlashAttention.
+              </p>
+            </div>
+
+            <div className="p-4 bg-[#07090E] rounded-2xl border border-[#1E293B] space-y-2">
+              <div className="flex items-center gap-2 text-amber-400 font-bold">
+                <Cpu className="w-4 h-4" />
+                <span>3. Hardware Match</span>
+              </div>
+              <p className="text-slate-400 font-sans text-[11px] leading-relaxed">
+                Score cost vs. latency trade-offs across H100, RTX 4090, & Snapdragon.
+              </p>
+            </div>
+
+            <div className="p-4 bg-[#07090E] rounded-2xl border border-[#1E293B] space-y-2">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                <Download className="w-4 h-4" />
+                <span>4. Export Serving</span>
+              </div>
+              <p className="text-slate-400 font-sans text-[11px] leading-relaxed">
+                Download verified Triton config.pbtxt, vLLM Compose, or C++ binaries.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Knowledge Base Guides Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full border-t border-[#1E293B] space-y-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest bg-cyan-950/80 px-2.5 py-0.5 rounded border border-cyan-800/60">
+                Inference Optimization Academy
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
+              Knowledge Base & Technical Guides
+            </h2>
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+              Explore in-depth architectural guides on LLM quantization, kernel arithmetic intensity, PagedAttention, and silicon TCO.
+            </p>
+          </div>
+
+          <button
+            onClick={() => onNavigate('knowledge-base')}
+            className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
+          >
+            <span>View All Knowledge Articles</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {KNOWLEDGE_BASE_ARTICLES.slice(0, 3).map((article) => (
+            <div
+              key={article.id}
+              onClick={() => onNavigate('knowledge-base')}
+              className="bg-[#0D1322] border border-[#1E293B] hover:border-cyan-500/60 rounded-3xl p-6 flex flex-col justify-between space-y-4 cursor-pointer transition-all duration-200 hover:-translate-y-1 group shadow-lg"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 bg-cyan-950/80 text-cyan-300 rounded border border-cyan-800/60">
+                    {article.category}
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400">
+                    {article.readingTimeMin} min read
+                  </span>
+                </div>
+
+                <h3 className="text-base font-bold font-mono text-white group-hover:text-cyan-300 transition-colors leading-snug line-clamp-2">
+                  {article.title}
+                </h3>
+
+                <p className="text-xs text-slate-400 font-sans leading-relaxed line-clamp-3">
+                  {article.summary}
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-[#1E293B] flex items-center justify-between text-xs font-mono text-cyan-400 font-bold">
+                <span>Read Full Guide</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Call to Action Banner */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
         <div className="relative rounded-3xl bg-gradient-to-r from-cyan-950 via-indigo-950 to-emerald-950 border border-cyan-800/50 p-8 sm:p-12 text-center space-y-6 overflow-hidden shadow-2xl">
@@ -302,14 +530,63 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onNavigate }) 
               Start Free Profiling Job
             </button>
             <button
-              onClick={() => onNavigate('docs')}
+              onClick={() => onNavigate('knowledge-base')}
               className="px-6 py-3.5 bg-[#07090E]/80 hover:bg-[#07090E] text-slate-200 hover:text-white font-bold text-sm rounded-xl border border-slate-700 transition-colors cursor-pointer"
             >
-              Read Documentation
+              Browse Knowledge Base
             </button>
           </div>
         </div>
       </section>
+
+      {/* Global Semantic SEO Footer */}
+      <footer className="w-full bg-[#05070B] border-t border-[#1E293B] py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-xs font-mono">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Cpu className="w-5 h-5 text-cyan-400" />
+              <span className="text-sm font-extrabold text-white">CorePick</span>
+            </div>
+            <p className="text-slate-400 leading-relaxed font-sans">
+              The vendor-neutral hardware profiling and compiler optimization platform for AI production teams.
+            </p>
+            <p className="text-slate-500 text-[10px]">© 2026 CorePick AI Inc. All rights reserved.</p>
+          </div>
+
+          <div className="space-y-2">
+            <span className="font-bold text-slate-300 uppercase tracking-wider block">Optimization Tools</span>
+            <ul className="space-y-1.5 text-slate-400">
+              <li><button onClick={() => onNavigate('app-analyze')} className="hover:text-cyan-300 cursor-pointer">Model Profiler Wizard</button></li>
+              <li><button onClick={() => onNavigate('app-inspector')} className="hover:text-cyan-300 cursor-pointer">Roofline & Flamegraph</button></li>
+              <li><button onClick={() => onNavigate('app-sandbox')} className="hover:text-cyan-300 cursor-pointer">Hardware Comparison Sandbox</button></li>
+              <li><button onClick={() => onNavigate('app-deploy')} className="hover:text-cyan-300 cursor-pointer">Streaming Latency Simulator</button></li>
+              <li><button onClick={() => onNavigate('app-compiler')} className="hover:text-cyan-300 cursor-pointer">Compiler Tuning & Diagnostics</button></li>
+            </ul>
+          </div>
+
+          <div className="space-y-2">
+            <span className="font-bold text-slate-300 uppercase tracking-wider block">Knowledge Hub</span>
+            <ul className="space-y-1.5 text-slate-400">
+              <li><button onClick={() => onNavigate('knowledge-base')} className="hover:text-cyan-300 cursor-pointer">AWQ vs GPTQ Quantization</button></li>
+              <li><button onClick={() => onNavigate('knowledge-base')} className="hover:text-cyan-300 cursor-pointer">Roofline Model Guide</button></li>
+              <li><button onClick={() => onNavigate('knowledge-base')} className="hover:text-cyan-300 cursor-pointer">PagedAttention & KV-Cache</button></li>
+              <li><button onClick={() => onNavigate('knowledge-base')} className="hover:text-cyan-300 cursor-pointer">Inference Engine Showdown</button></li>
+              <li><button onClick={() => onNavigate('knowledge-base')} className="hover:text-cyan-300 cursor-pointer">AI GPU Cloud TCO Playbook</button></li>
+            </ul>
+          </div>
+
+          <div className="space-y-2">
+            <span className="font-bold text-slate-300 uppercase tracking-wider block">Target Ecosystem</span>
+            <div className="flex flex-wrap gap-1.5">
+              {['NVIDIA TensorRT', 'ONNX Runtime', 'Qualcomm QNN', 'vLLM', 'Triton Server', 'Intel OpenVINO', 'Apple CoreML', 'FlashAttention'].map((tag, i) => (
+                <span key={i} className="px-2 py-0.5 bg-[#0D1322] border border-[#1E293B] rounded text-[10px] text-slate-400">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

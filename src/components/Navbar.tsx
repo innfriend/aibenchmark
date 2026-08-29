@@ -37,21 +37,27 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
           <nav className="hidden md:flex items-center gap-1">
             {[
               { id: 'landing', label: 'Overview' },
+              { id: 'how-it-works', label: 'Who & How It Works' },
               { id: 'platform', label: 'Platform Engine' },
-              { id: 'how-it-works', label: 'How It Works' },
               { id: 'benchmarks', label: 'Public Benchmarks' },
+              { id: 'knowledge-base', label: 'Knowledge Base', badge: 'New' },
               { id: 'docs', label: 'Docs & CLI' },
-            ].map((link) => (
+            ].map((link: any) => (
               <button
                 key={link.id}
                 onClick={() => onNavigate(link.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   currentView === link.id
                     ? 'text-cyan-400 bg-cyan-950/40 border border-cyan-800/50'
                     : 'text-slate-300 hover:text-white hover:bg-[#131B2E]'
                 }`}
               >
-                {link.label}
+                <span>{link.label}</span>
+                {link.badge && (
+                  <span className="text-[9px] font-mono px-1 py-0.2 bg-cyan-500/20 text-cyan-300 rounded border border-cyan-500/30">
+                    {link.badge}
+                  </span>
+                )}
               </button>
             ))}
           </nav>

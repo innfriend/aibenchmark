@@ -19,6 +19,7 @@ import { GraphInspectorView } from './components/GraphInspectorView';
 import { HardwareSandboxView } from './components/HardwareSandboxView';
 import { DeploymentExporterView } from './components/DeploymentExporterView';
 import { CustomModelProfiler } from './components/CustomModelProfiler';
+import { KnowledgeBaseView } from './components/KnowledgeBaseView';
 import { OptimizationJob, ModelArchitecture } from './types';
 import { SAMPLE_OPTIMIZATION_JOBS, MODEL_CATALOG } from './data/mockData';
 
@@ -68,11 +69,13 @@ export default function App() {
 
         {/* Dynamic Route View Mount */}
         <main className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-          {currentView === 'home' && <LandingPageView onNavigate={handleNavigate} />}
+          {(currentView === 'home' || currentView === 'landing') && <LandingPageView onNavigate={handleNavigate} />}
           {currentView === 'platform' && <PlatformView onNavigate={handleNavigate} />}
           {currentView === 'how-it-works' && <HowItWorksView onNavigate={handleNavigate} />}
           {currentView === 'docs' && <DocsView onNavigate={handleNavigate} />}
           {currentView === 'about' && <AboutContactView onNavigate={handleNavigate} />}
+          {currentView === 'benchmarks' && <BenchmarksView onNavigate={handleNavigate} />}
+          {currentView === 'knowledge-base' && <KnowledgeBaseView onNavigate={handleNavigate} onOpenWizardWithModel={handleOpenWizardWithModel} />}
 
           {/* App / Workspace Views */}
           {currentView === 'app-dashboard' && (
@@ -117,6 +120,10 @@ export default function App() {
 
           {currentView === 'app-compiler' && (
             <CustomModelProfiler onNavigate={handleNavigate} onOpenWizardWithModel={handleOpenWizardWithModel} />
+          )}
+
+          {currentView === 'app-knowledge' && (
+            <KnowledgeBaseView onNavigate={handleNavigate} onOpenWizardWithModel={handleOpenWizardWithModel} />
           )}
 
           {currentView === 'app-fleet' && (

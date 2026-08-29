@@ -15,7 +15,8 @@ import {
   SlidersHorizontal,
   Activity,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  BookOpen
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -42,6 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
       items: [
         { id: 'app-deploy', label: 'Deploy & Stream Sim', icon: Code2, badge: 'New' },
         { id: 'app-compiler', label: 'Compiler Tuning & Diag', icon: SlidersHorizontal, badge: 'New' },
+        { id: 'app-knowledge', label: 'Knowledge Base', icon: BookOpen, badge: 'SEO Hub' },
         { id: 'app-benchmarks', label: 'Verified Benchmarks', icon: BarChart3 },
         { id: 'app-cli', label: 'CLI & Local Agent', icon: Terminal },
         { id: 'app-reports', label: 'Reports & Export', icon: FileText },

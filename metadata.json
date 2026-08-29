@@ -1,0 +1,6 @@
+{
+  "name": "Google AI Studio Developer Platform",
+  "description": "A comprehensive developer workspace for building, prototyping, and testing with Gemini models, system prompts, structured outputs, function calling tools, and multimodal workflows.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

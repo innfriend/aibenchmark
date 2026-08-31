@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { HARDWARE_CATALOG, MODEL_CATALOG, SAMPLE_OPTIMIZATION_JOBS } from './data/mockData';
 import { KNOWLEDGE_BASE_ARTICLES } from './data/knowledgeBaseData';
+import { OPTIMIZATION_PRESETS } from './components/QuickOptimizationPresets';
+import { HPC_GLOSSARY } from './components/ConceptTooltip';
 
 describe('CorePick System & Data Integrity Test Suite', () => {
   describe('Hardware Catalog System Tests', () => {
@@ -36,6 +38,31 @@ describe('CorePick System & Data Integrity Test Suite', () => {
         expect(model.parameterCountM).toBeGreaterThan(0);
         expect(model.totalFlopsGflops).toBeGreaterThan(0);
         expect(model.layersCount).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  describe('Optimization 1-Click Presets & UX Tests', () => {
+    it('should contain configured 1-click goal recipes with valid hardware targets and precisions', () => {
+      expect(OPTIMIZATION_PRESETS.length).toBeGreaterThanOrEqual(4);
+      OPTIMIZATION_PRESETS.forEach(preset => {
+        expect(preset.id).toBeTruthy();
+        expect(preset.name).toBeTruthy();
+        expect(preset.modelId).toBeTruthy();
+        expect(preset.hardwareIds.length).toBeGreaterThan(0);
+        expect(preset.precisions.length).toBeGreaterThan(0);
+        expect(preset.expectedOutcome.latency).toBeTruthy();
+        expect(preset.expectedOutcome.vramReduction).toBeTruthy();
+      });
+    });
+
+    it('should have a comprehensive plain-English glossary with recommendations', () => {
+      const keys = Object.keys(HPC_GLOSSARY);
+      expect(keys.length).toBeGreaterThanOrEqual(7);
+      keys.forEach(k => {
+        const item = HPC_GLOSSARY[k];
+        expect(item.term).toBeTruthy();
+        expect(item.plainEnglish.length).toBeGreaterThan(20);
       });
     });
   });

@@ -18,10 +18,13 @@ import {
   Sliders,
   Code2,
   SlidersHorizontal,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from 'lucide-react';
 import { MODEL_CATALOG, SAMPLE_OPTIMIZATION_JOBS, HARDWARE_CATALOG } from '../data/mockData';
 import { OptimizationJob } from '../types';
+import { QuickOptimizationPresets, OptimizationPreset } from './QuickOptimizationPresets';
+import { ConceptTooltip } from './ConceptTooltip';
 
 interface DashboardViewProps {
   onNavigate: (view: string) => void;
@@ -35,6 +38,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenWizardWithModel,
 }) => {
   const recentJobs = SAMPLE_OPTIMIZATION_JOBS;
+
+  const handleSelectPreset = (preset: OptimizationPreset) => {
+    onOpenWizardWithModel(preset.modelId);
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-[#07090E] text-slate-100 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-8">
@@ -58,6 +65,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span>New Profiling Job</span>
           </button>
         </div>
+      </div>
+
+      {/* 1-Click Goal Recipes */}
+      <div className="bg-[#0D1322] border border-[#1E293B] rounded-3xl p-5 shadow-lg">
+        <QuickOptimizationPresets onSelectPreset={handleSelectPreset} />
       </div>
 
       {/* Advanced Engineering Suites Banner */}

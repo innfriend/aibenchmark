@@ -1,17 +1,24 @@
 import React from 'react';
-import { Cpu, Zap, Activity, BookOpen, Layers, DollarSign, Terminal, Shield, ArrowRight, Server } from 'lucide-react';
+import { Cpu, Zap, Activity, BookOpen, Layers, DollarSign, Terminal, Shield, ArrowRight, Server, Search, HelpCircle } from 'lucide-react';
 
 interface NavbarProps {
   currentView: string;
   onNavigate: (view: string) => void;
+  onOpenCommandPalette?: () => void;
+  onOpenGlossary?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
+export const Navbar: React.FC<NavbarProps> = ({ 
+  currentView, 
+  onNavigate,
+  onOpenCommandPalette,
+  onOpenGlossary
+}) => {
   const isAppView = currentView.startsWith('app-') || currentView === 'admin';
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#07090E]/90 backdrop-blur-md border-b border-[#1E293B] select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-4">
         {/* Brand Logo */}
         <div 
           onClick={() => onNavigate('landing')}
@@ -34,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
 
         {/* Public Navigation Links */}
         {!isAppView && (
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {[
               { id: 'landing', label: 'Overview' },
               { id: 'how-it-works', label: 'Who & How It Works' },
@@ -73,15 +80,39 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
           </div>
         )}
 
-        {/* Right CTA Actions */}
+        {/* Search Command Palette Trigger & Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Universal Search (Cmd + K) */}
+          <button
+            onClick={onOpenCommandPalette}
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#0D1322] hover:bg-[#131B2E] text-slate-300 hover:text-white text-xs font-mono rounded-xl border border-[#1E293B] hover:border-cyan-800/60 transition-all cursor-pointer shadow-inner"
+            title="Open Command Palette (Cmd + K)"
+          >
+            <Search className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden sm:inline text-slate-400">Quick Search...</span>
+            <kbd className="hidden sm:inline-flex items-center text-[10px] font-bold text-cyan-300 bg-[#07090E] px-1.5 py-0.5 rounded border border-[#27354F]">
+              ⌘K
+            </kbd>
+          </button>
+
+          {/* Plain English Glossary */}
+          <button
+            onClick={onOpenGlossary}
+            className="flex items-center gap-1 px-2.5 py-1.5 bg-[#0D1322] hover:bg-[#131B2E] text-slate-300 hover:text-cyan-300 text-xs font-mono rounded-xl border border-[#1E293B] transition-colors cursor-pointer"
+            title="Plain-English HPC Glossary"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden md:inline">Glossary</span>
+          </button>
+
           {/* Quick Launch Wizard */}
           <button
             onClick={() => onNavigate('app-analyze')}
             className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
           >
             <Zap className="w-3.5 h-3.5 fill-current" />
-            <span>Profile Model</span>
+            <span className="hidden sm:inline">Profile Model</span>
+            <span className="sm:hidden">Profile</span>
           </button>
 
           {/* Switch to App or Landing */}

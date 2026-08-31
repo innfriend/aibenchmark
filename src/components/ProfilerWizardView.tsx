@@ -13,10 +13,16 @@ import {
   CheckCircle2, 
   AlertCircle,
   Shield,
-  Gauge
+  Gauge,
+  Sparkles,
+  Info,
+  Smartphone
 } from 'lucide-react';
 import { ModelArchitecture, HardwareSpec, OptimizationObjective, PrecisionType, OptimizationJob } from '../types';
 import { MODEL_CATALOG, HARDWARE_CATALOG } from '../data/mockData';
+import { QuickOptimizationPresets, OptimizationPreset } from './QuickOptimizationPresets';
+import { OOMWarningGuard } from './OOMWarningGuard';
+import { ConceptTooltip } from './ConceptTooltip';
 
 interface ProfilerWizardViewProps {
   initialModelId?: string;
@@ -41,6 +47,7 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
   const [selectedPrecisions, setSelectedPrecisions] = useState<PrecisionType[]>(['FP16', 'INT8']);
   const [batchSizes, setBatchSizes] = useState<number[]>([1, 4, 16, 32]);
   const [builderOptimizationLevel, setBuilderOptimizationLevel] = useState(5);
+  const [appliedPresetId, setAppliedPresetId] = useState<string | undefined>(undefined);
 
   // Simulation Runner State
   const [isRunning, setIsRunning] = useState(false);
@@ -49,6 +56,15 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
   const [simulationLogs, setSimulationLogs] = useState<string[]>([]);
 
   const selectedModel = MODEL_CATALOG.find((m) => m.id === selectedModelId) || MODEL_CATALOG[0];
+  const primaryHardware = HARDWARE_CATALOG.find((h) => selectedHardwareIds.includes(h.id)) || HARDWARE_CATALOG[0];
+
+  const handleApplyPreset = (preset: OptimizationPreset) => {
+    setAppliedPresetId(preset.id);
+    setSelectedModelId(preset.modelId);
+    setSelectedHardwareIds(preset.hardwareIds);
+    setObjective(preset.targetObjective);
+    setSelectedPrecisions(preset.precisions);
+  };
 
   const toggleHardware = (id: string) => {
     if (selectedHardwareIds.includes(id)) {
@@ -74,7 +90,7 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
     {
       id: 'lowest_latency',
       label: 'Lowest Latency (Sub-ms)',
-      desc: 'Optimized for real-time robotic control, audio streaming, and high-frequency trading.',
+      desc: 'Optimized for real-time robotic control, audio streaming, and conversational AI.',
       icon: Zap,
     },
     {
@@ -86,7 +102,7 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
     {
       id: 'lowest_power',
       label: 'Lowest Power Consumption',
-      desc: 'Engineered for battery-powered edge NPUs, drones, and mobile smart devices (&lt; 15W).',
+      desc: 'Engineered for battery-powered edge NPUs, drones, and mobile smart devices (< 15W).',
       icon: Cpu,
     },
     {
@@ -151,8 +167,8 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
       {/* Wizard Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
-            Optimization & Profiling Wizard
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono flex items-center gap-2">
+            <span>Optimization & Profiling Wizard</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Configure multi-target hardware profiling, precision modes, and kernel compilation constraints.
@@ -164,12 +180,13 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
           {[1, 2, 3, 4].map((step) => (
             <div
               key={step}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all ${
+              onClick={() => !isRunning && setCurrentStep(step)}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 currentStep === step
                   ? 'bg-cyan-500 text-[#07090E] shadow-sm'
                   : currentStep > step
                   ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/50'
-                  : 'bg-[#131B2E] text-slate-500'
+                  : 'bg-[#131B2E] text-slate-500 hover:text-slate-300'
               }`}
             >
               <span>{step}</span>
@@ -180,6 +197,16 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
           ))}
         </div>
       </div>
+
+      {/* 1-Click Goal Recipes (Instant Presets) */}
+      {!isRunning && (
+        <div className="bg-[#0D1322] border border-[#1E293B] rounded-3xl p-5">
+          <QuickOptimizationPresets
+            onSelectPreset={handleApplyPreset}
+            selectedPresetId={appliedPresetId}
+          />
+        </div>
+      )}
 
       {/* Main Wizard Content Card */}
       <div className="bg-[#0D1322] border border-[#1E293B] rounded-3xl p-6 sm:p-8 relative overflow-hidden">
@@ -220,9 +247,14 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
             {/* STEP 1: Select Model */}
             {currentStep === 1 && (
               <div className="space-y-4">
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-white font-mono">Step 1: Choose Target Architecture</h3>
-                  <p className="text-xs text-slate-400">Select an existing neural network architecture or ingested model.</p>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-lg font-bold text-white font-mono">Step 1: Choose Target Architecture</h3>
+                    <p className="text-xs text-slate-400">Select an existing neural network architecture or ingested model.</p>
+                  </div>
+                  <span className="text-xs font-mono text-cyan-300 bg-cyan-950/80 px-2.5 py-1 rounded-xl border border-cyan-800/60">
+                    Selected: <strong>{selectedModel.name}</strong>
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -234,7 +266,7 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
                         onClick={() => setSelectedModelId(m.id)}
                         className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                           isSelected
-                            ? 'bg-gradient-to-b from-cyan-950/40 to-[#0A0E1A] border-cyan-500 shadow-md'
+                            ? 'bg-gradient-to-b from-cyan-950/40 to-[#0A0E1A] border-cyan-500 shadow-md ring-1 ring-cyan-400/30'
                             : 'bg-[#07090E] border-[#1E293B] hover:border-slate-600'
                         }`}
                       >
@@ -247,7 +279,10 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
                         <h4 className="text-sm font-bold text-white font-mono mt-2">{m.name}</h4>
                         <div className="mt-3 pt-2 border-t border-[#1E293B] text-[11px] font-mono text-slate-400 flex items-center justify-between">
                           <span>{m.framework}</span>
-                          <span>{m.totalFlopsGflops} GFLOPs</span>
+                          <span className="flex items-center gap-1">
+                            <span>{m.totalFlopsGflops} GFLOPs</span>
+                            <ConceptTooltip conceptKey="arithmetic_intensity" />
+                          </span>
                         </div>
                       </div>
                     );
@@ -259,10 +294,22 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
             {/* STEP 2: Select Hardware Scope */}
             {currentStep === 2 && (
               <div className="space-y-4">
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-white font-mono">Step 2: Select Hardware Comparison Scope</h3>
-                  <p className="text-xs text-slate-400">Choose 2 or more target devices to benchmark and compute Pareto frontiers.</p>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-lg font-bold text-white font-mono">Step 2: Select Hardware Comparison Scope</h3>
+                    <p className="text-xs text-slate-400">Choose 2 or more target devices to benchmark and compute Pareto frontiers.</p>
+                  </div>
+                  <span className="text-xs font-mono text-slate-400">
+                    {selectedHardwareIds.length} devices selected
+                  </span>
                 </div>
+
+                {/* Real-Time Memory Sizing Guard */}
+                <OOMWarningGuard
+                  model={selectedModel}
+                  selectedHardware={primaryHardware}
+                  precision={selectedPrecisions[0] || 'FP16'}
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {HARDWARE_CATALOG.map((hw) => {
@@ -273,7 +320,7 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
                         onClick={() => toggleHardware(hw.id)}
                         className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                           isChecked
-                            ? 'bg-cyan-950/30 border-cyan-500 shadow-md'
+                            ? 'bg-cyan-950/30 border-cyan-500 shadow-md ring-1 ring-cyan-500/30'
                             : 'bg-[#07090E] border-[#1E293B] opacity-70 hover:opacity-100'
                         }`}
                       >
@@ -320,7 +367,7 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
                         onClick={() => setObjective(obj.id)}
                         className={`p-5 rounded-2xl border cursor-pointer transition-all flex items-start gap-4 ${
                           isSelected
-                            ? 'bg-gradient-to-r from-cyan-950/50 to-indigo-950/40 border-cyan-500 shadow-md'
+                            ? 'bg-gradient-to-r from-cyan-950/50 to-indigo-950/40 border-cyan-500 shadow-md ring-1 ring-cyan-400/40'
                             : 'bg-[#07090E] border-[#1E293B] hover:border-slate-600'
                         }`}
                       >
@@ -348,8 +395,21 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
                   <p className="text-xs text-slate-400">Select target precisions and compiler tuning flags.</p>
                 </div>
 
+                {/* Sizing Guard for the selected precision */}
+                <OOMWarningGuard
+                  model={selectedModel}
+                  selectedHardware={primaryHardware}
+                  precision={selectedPrecisions[0] || 'FP16'}
+                />
+
                 <div className="space-y-3">
-                  <span className="text-xs font-mono font-bold text-slate-400 uppercase">Target Quantization Precisions</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold text-slate-400 uppercase flex items-center gap-1.5">
+                      <span>Target Quantization Precisions</span>
+                      <ConceptTooltip conceptKey="awq" />
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400">Select 1 or more</span>
+                  </div>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     {(['FP32', 'FP16', 'BF16', 'INT8', 'INT4'] as PrecisionType[]).map((prec) => {
                       const isChecked = selectedPrecisions.includes(prec);
@@ -373,7 +433,10 @@ export const ProfilerWizardView: React.FC<ProfilerWizardViewProps> = ({
 
                 <div className="p-4 bg-[#07090E] border border-[#1E293B] rounded-2xl space-y-4">
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-slate-300">TensorRT Builder Optimization Level</span>
+                    <span className="text-slate-300 flex items-center gap-1.5">
+                      <span>TensorRT Builder Optimization Level</span>
+                      <ConceptTooltip conceptKey="operator_fusion" />
+                    </span>
                     <span className="text-cyan-400 font-bold">Level {builderOptimizationLevel} (Maximum Polyhedral Loop Search)</span>
                   </div>
                   <input

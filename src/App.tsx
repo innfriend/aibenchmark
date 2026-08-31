@@ -20,6 +20,8 @@ import { HardwareSandboxView } from './components/HardwareSandboxView';
 import { DeploymentExporterView } from './components/DeploymentExporterView';
 import { CustomModelProfiler } from './components/CustomModelProfiler';
 import { KnowledgeBaseView } from './components/KnowledgeBaseView';
+import { CommandPalette } from './components/CommandPalette';
+import { GlossaryModal } from './components/GlossaryModal';
 import { OptimizationJob, ModelArchitecture } from './types';
 import { SAMPLE_OPTIMIZATION_JOBS, MODEL_CATALOG } from './data/mockData';
 
@@ -28,6 +30,8 @@ export default function App() {
   const [currentView, setCurrentView] = useState<string>('home');
   const [activeJob, setActiveJob] = useState<OptimizationJob>(SAMPLE_OPTIMIZATION_JOBS[0]);
   const [wizardInitialModelId, setWizardInitialModelId] = useState<string>(MODEL_CATALOG[0].id);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
+  const [isGlossaryOpen, setIsGlossaryOpen] = useState<boolean>(false);
 
   // Helper to determine if we are in the workspace application mode
   const isAppMode = currentView.startsWith('app-');
@@ -57,6 +61,24 @@ export default function App() {
       {/* Top Navbar */}
       <Navbar
         currentView={currentView}
+        onNavigate={handleNavigate}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onOpenGlossary={() => setIsGlossaryOpen(true)}
+      />
+
+      {/* Global Command Palette (Cmd + K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={handleNavigate}
+        onOpenWizardWithModel={handleOpenWizardWithModel}
+        onOpenGlossary={() => setIsGlossaryOpen(true)}
+      />
+
+      {/* Plain English HPC Glossary Modal */}
+      <GlossaryModal
+        isOpen={isGlossaryOpen}
+        onClose={() => setIsGlossaryOpen(false)}
         onNavigate={handleNavigate}
       />
 
